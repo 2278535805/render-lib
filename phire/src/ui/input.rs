@@ -157,6 +157,15 @@ impl InlineInputBox {
         self.context_menu.visible = false;
         miniquad::window::set_ime_enabled(false);
         miniquad::window::show_keyboard(false);
+        miniquad::window::update_text_input_state(
+            String::new(),
+            0,
+            0,
+            false,
+            false,
+            0,
+            0,
+        );
         std::mem::take(&mut self.buffer)
     }
 
