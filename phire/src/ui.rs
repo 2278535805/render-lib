@@ -20,7 +20,7 @@ mod text;
 pub use text::{DrawText, TextPainter};
 
 mod input;
-pub use input::{InlineInputBox};
+pub use input::{InlineInputBox, InlineInputBtn};
 
 pub use glyph_brush::ab_glyph::FontArc;
 

@@ -2,7 +2,7 @@ crate::tl_file!("input");
 
 use super::Ui;
 use crate::{
-    ext::RectExt, judge::take_wheel, ui::scroll::WHEEL_STEP,
+    ext::RectExt, judge::take_wheel, ui::{DRectButton, scroll::WHEEL_STEP},
 };
 use macroquad::{
     input::Touch,
@@ -12,6 +12,59 @@ use macroquad::{
 
 const CONTEXT_MENU_MENU_W: f32 = 0.12;
 const CONTEXT_MENU_ITEM_Y: f32 = 0.04;
+
+pub struct InlineInputBtn {
+    pub input: InlineInputBox,
+    pub btn: DRectButton,
+
+    multiline: bool,
+    password: bool,
+}
+
+impl InlineInputBtn {
+    pub fn new(multiline: bool, password: bool) -> Self {
+        Self {
+            input: InlineInputBox::new(),
+            btn: DRectButton::new(),
+
+            multiline,
+            password,
+        }
+    }
+
+    pub fn confirm(&mut self, touch: &Touch) -> Option<String> {
+        if self.input.is_active() && self.input.touch(touch) {
+            Some(self.input.confirm())
+        } else {
+            None
+        }
+    }
+
+    pub fn is_active(&self) -> bool {
+        self.input.is_active()
+    }
+
+    pub fn activate(&mut self, touch: &Touch, t: f32, text: &str) {
+        if !self.input.is_active() && self.btn.touch(touch, t) {
+            self.input.activate(text, self.multiline, self.password);
+        }
+    }
+
+    pub fn update(&mut self) {
+        if self.input.is_active() {
+            self.input.update();
+        }
+    }
+
+    pub fn render(&mut self, ui: &mut Ui, rect: Rect, t: f32, color: Color, placeholder: &str, text: &str) {
+        if self.input.is_active() {
+            let (r, _path) = self.btn.build(ui, t, rect);
+            self.input.render(ui, r, color.a, placeholder);
+        } else {
+            self.btn.render_text(ui, rect, t, color.a, text, 0.4, false);
+        }
+    }
+}
 
 struct ContextMenu {
     visible: bool,
